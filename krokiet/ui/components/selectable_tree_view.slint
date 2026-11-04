@@ -3,6 +3,7 @@ import { ColorPalette } from "../globals/color_palette.slint";
 import { LoadImagePreviewRequest, SingleMainListModel, SortColumnMode } from "../globals/common.slint";
 import { Callabler } from "../globals/callabler.slint";
 import { FontSizes } from "../globals/fonts.slint";
+import { GuiState } from "../globals/gui_state.slint";
 import { PopupContextMenu } from "popup_context_menu.slint";
 
 export component SelectableTableView inherits Rectangle {
@@ -28,13 +29,22 @@ export component SelectableTableView inherits Rectangle {
     in-out property <int> start_shift_idx: -1;
     in-out property <int> last_selected_idx: -1;
     private property <int> context_menu_row_idx: -1;
-    out property <length> item_height: 23px;
+    in property <bool> show_thumbnails: false;
+    in property <length> thumbnail_size: 64px;
+    // Drawn after the last column, so it needs no header of its own
+    private property <length> thumbnail_column_width: show_thumbnails ? thumbnail_size + 10px : 0px;
+    // Physical pixels, in steps of 64 so that small size changes reuse already decoded thumbnails
+    private property <int> thumbnail_decode_side: ceil(thumbnail_size / 1phx / 64) * 64;
+    out property <length> item_height: show_thumbnails ? thumbnail_size + 4px : header_row_height;
+    private property <length> header_row_height: 23px;
+    // Separators are shorter than thumbnail rows, so a row offset is only exact once that row is laid out
+    private property <int> reveal_idx: -1;
     in-out property <SortColumnMode> sort_column_mode: SortColumnMode.None;
     in-out property <int> sort_column_idx: -1;
     in-out property <bool> sort_available: true;
 
 
-    out property <length> list_view_width: max(self.width - 25px, column_sizes[0] + column_sizes[1] + column_sizes[2] + column_sizes[3] + column_sizes[4] + column_sizes[5] + column_sizes[6] + column_sizes[7] + column_sizes[8] + column_sizes[9] + column_sizes[10] + column_sizes[11] + column_sizes[12]);
+    out property <length> list_view_width: max(self.width - 25px, thumbnail_column_width + column_sizes[0] + column_sizes[1] + column_sizes[2] + column_sizes[3] + column_sizes[4] + column_sizes[5] + column_sizes[6] + column_sizes[7] + column_sizes[8] + column_sizes[9] + column_sizes[10] + column_sizes[11] + column_sizes[12]);
 
     VerticalBox {
         padding: 0px;
@@ -111,10 +121,10 @@ export component SelectableTableView inherits Rectangle {
 
         list_view := ListView {
             min-width: 100px;
-            for r[idx] in root.values: Rectangle {
+            for r[idx] in root.values: row := Rectangle {
                 width: list_view_width;
                 border-radius: 5px;
-                height: item_height;
+                height: r.header_row ? header_row_height : item_height;
                 background: ColorPalette.get_listview_color_with_header(r.focused_row, touch-area.has-hover, r.header_row);
                 touch_area := TouchArea {
                     forward-focus: focus_item;
@@ -187,6 +197,27 @@ export component SelectableTableView inherits Rectangle {
                             overflow: elide;
                         }
                     }
+
+                    if root.show_thumbnails: Rectangle {
+                        width: root.thumbnail_column_width;
+                        if !r.header_row && r.val_str.length > 0: Image {
+                            x: 5px;
+                            width: root.thumbnail_size;
+                            height: root.thumbnail_size;
+                            image-fit: contain;
+                            source: Callabler.get_list_thumbnail(root.thumbnail_path(r), root.thumbnail_decode_side, GuiState.list_thumbnails_version);
+                        }
+                    }
+                }
+
+                // Fires after layout, when the real row position is known
+                Timer {
+                    interval: 1ms;
+                    running: idx == root.reveal_idx;
+                    triggered => {
+                        root.reveal_idx = -1;
+                        root.scroll_into_view(row.y, row.height);
+                    }
                 }
             }
         }
@@ -210,10 +241,20 @@ export component SelectableTableView inherits Rectangle {
     }
 
     function position_to_item(idx: int) {
-        if (idx * item_height < -list_view.content-y) {
-            list_view.content-y = - (idx * item_height - 10px);
-        } else if ((idx + 1) * item_height > -list_view.content-y + list_view.height) {
-            list_view.content-y = - ((idx + 1) * item_height - list_view.height + 10px);
+        if (show_thumbnails) {
+            reveal_idx = idx;
+            // Average row height, the same estimate the std ListView uses for rows of varying height
+            scroll_into_view(idx * list_view.content-height / max(1, root.values.length), item_height);
+        } else {
+            scroll_into_view(idx * item_height, item_height);
+        }
+    }
+
+    function scroll_into_view(y: length, height: length) {
+        if (y < -list_view.content-y) {
+            list_view.content-y = - (y - 10px);
+        } else if (y + height > -list_view.content-y + list_view.height) {
+            list_view.content-y = - (y + height - list_view.height + 10px);
         }
     }
 
@@ -299,6 +340,10 @@ export component SelectableTableView inherits Rectangle {
         if ((event.text == "a" || event.text == "A") && event.modifiers.control && !event.modifiers.shift && !event.modifiers.alt && !event.modifiers.meta) {
             Callabler.row_select_all();
         }
+    }
+
+    pure function thumbnail_path(row: SingleMainListModel) -> string {
+        root.previewImageIdx != -1 ? row.val_str[root.previewImageIdx] : row.val_str[root.parentPathIdx] + "/" + row.val_str[root.fileNameIdx]
     }
 
     function no_crop_preview_request(path: string) -> LoadImagePreviewRequest {

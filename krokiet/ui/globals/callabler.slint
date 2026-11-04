@@ -50,6 +50,9 @@ export global Callabler {
 
     // Preview
     callback load_image_preview(LoadImagePreviewRequest);
+    // (path, longest side in physical pixels, GuiState.list_thumbnails_version)
+    // The version is passed only so that bindings query the cache again when it changes
+    pure callback get_list_thumbnail(string, int, int) -> image;
 
     // Settings
     callback changed_settings_preset();

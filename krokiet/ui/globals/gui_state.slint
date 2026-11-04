@@ -11,6 +11,8 @@ export global GuiState {
     in-out property <bool> preview_visible;
     in-out property <image> preview_image;
     in-out property <string> preview_image_path;
+    // Bumped by Rust whenever a results list thumbnail finishes loading
+    in-out property <int> list_thumbnails_version;
 
     in-out property <bool> audio_feature_enabled: false;
     in-out property <bool> notifications_feature_enabled: false;

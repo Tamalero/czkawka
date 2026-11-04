@@ -19,6 +19,7 @@ use home::home_dir;
 use image::imageops::FilterType;
 use serde::{Deserialize, Serialize};
 
+use crate::connect_list_thumbnails::DEFAULT_LIST_THUMBNAIL_SIZE;
 use crate::connect_translation::find_the_closest_language_idx_to_system;
 use crate::settings::combo_box::StringComboBoxItem;
 
@@ -84,8 +85,14 @@ pub struct SettingsCustom {
     pub hide_hard_links: bool,
     #[serde(default = "ttrue")]
     pub similar_images_show_image_preview: bool,
+    #[serde(default)]
+    pub similar_images_list_thumbnails: bool,
     #[serde(default = "ttrue")]
     pub video_thumbnails_preview: bool,
+    #[serde(default)]
+    pub similar_videos_list_thumbnails: bool,
+    #[serde(default = "default_list_thumbnail_size")]
+    pub list_thumbnail_size: u32,
     #[serde(default = "ttrue", alias = "video_thumbnails_unused_thumbnails")]
     pub clear_unused_video_thumbnails: bool,
     #[serde(default = "default_sub_hash_size")]
@@ -536,6 +543,9 @@ pub(crate) fn default_geometric_invariance() -> String {
 }
 pub(crate) fn default_sub_hash_size() -> String {
     DEFAULT_HASH_SIZE.to_string()
+}
+pub(crate) fn default_list_thumbnail_size() -> u32 {
+    DEFAULT_LIST_THUMBNAIL_SIZE
 }
 pub(crate) fn default_window_width() -> u32 {
     DEFAULT_WINDOW_WIDTH

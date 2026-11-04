@@ -263,6 +263,29 @@ component ApplicationScaleComponent inherits HorizontalLayout {
     }
 }
 
+component ThumbnailSizeSliderComponent inherits HorizontalLayout {
+    spacing: 5px;
+    Text {
+        text <=> Translations.settings_list_thumbnail_size_text;
+        vertical-alignment: TextVerticalAlignment.center;
+        height: SettingsSize.item_height;
+        font-size: FontSizes.normal;
+    }
+    slider := Slider {
+        minimum: 32;
+        maximum: 256;
+        step: 8;
+        value <=> Settings.list_thumbnail_size;
+        height: SettingsSize.item_height;
+    }
+    Text {
+        height: SettingsSize.item_height;
+        vertical-alignment: TextVerticalAlignment.center;
+        text: round(slider.value) + " px";
+        font-size: FontSizes.normal;
+    }
+}
+
 component MinMaxSizeComponent inherits HorizontalLayout {
     spacing: 20px;
     Text {
@@ -612,6 +635,13 @@ export component SettingsList inherits VerticalLayout {
                 model <=> Settings.similar_images_show_image_preview;
             }
 
+            CheckBoxComponent {
+                name <=> Translations.settings_list_thumbnails_text;
+                model <=> Settings.similar_images_list_thumbnails;
+            }
+
+            ThumbnailSizeSliderComponent { }
+
 
 
             HeaderText {
@@ -622,6 +652,13 @@ export component SettingsList inherits VerticalLayout {
                 name <=> Translations.settings_similar_videos_preview_text;
                 model <=> Settings.video_thumbnails_preview;
             }
+
+            CheckBoxComponent {
+                name <=> Translations.settings_list_thumbnails_text;
+                model <=> Settings.similar_videos_list_thumbnails;
+            }
+
+            ThumbnailSizeSliderComponent { }
 
             HintText {
                 hint_text <=> Translations.settings_similar_videos_preview_hint_text;

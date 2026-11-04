@@ -148,6 +148,8 @@ export component MainList {
         topLeftCropIdx: GuiState.similar_images_data_idx[3];
         originalWidthIdx: GuiState.similar_images_data_idx[4];
         originalHeightIdx: GuiState.similar_images_data_idx[5];
+        show_thumbnails: Settings.similar_images_list_thumbnails;
+        thumbnail_size: round(Settings.list_thumbnail_size) * 1px;
         sort_available: !working;
     }
 
@@ -166,6 +168,8 @@ export component MainList {
         topLeftCropIdx: GuiState.similar_videos_data_idx[3];
         originalWidthIdx: GuiState.similar_videos_data_idx[4];
         originalHeightIdx: GuiState.similar_videos_data_idx[5];
+        show_thumbnails: Settings.similar_videos_list_thumbnails;
+        thumbnail_size: round(Settings.list_thumbnail_size) * 1px;
         sort_available: !working;
     }
 

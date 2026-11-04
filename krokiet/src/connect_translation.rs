@@ -343,6 +343,8 @@ fn translate_items(app: &MainWindow) {
     translation.set_settings_hide_hard_links_text(flk!("settings_hide_hard_links").into());
     translation.set_settings_hide_hard_links_hint_text(flk!("settings_hide_hard_links_hint").into());
     translation.set_settings_similar_images_show_image_preview_text(flk!("settings_similar_images_show_image_preview").into());
+    translation.set_settings_list_thumbnails_text(flk!("settings_list_thumbnails").into());
+    translation.set_settings_list_thumbnail_size_text(flk!("settings_list_thumbnail_size").into());
     translation.set_settings_open_config_folder_text(flk!("settings_open_config_folder").into());
     translation.set_settings_open_cache_folder_text(flk!("settings_open_cache_folder").into());
     translation.set_settings_language_text(flk!("settings_language").into());

@@ -18,6 +18,7 @@ use serde::{Deserialize, Serialize};
 use slint::{ComponentHandle, LogicalSize, Model, ModelRc, VecModel, WindowSize};
 
 use crate::common::{create_excluded_paths_model_from_pathbuf, create_included_paths_model_from_pathbuf, create_vec_model_from_vec_string};
+use crate::connect_list_thumbnails::clamp_list_thumbnail_size;
 use crate::connect_translation::change_language;
 use crate::settings::combo_box::StringComboBoxItems;
 use crate::settings::model::{
@@ -449,7 +450,10 @@ pub(crate) fn set_settings_to_gui(app: &MainWindow, custom_settings: &SettingsCu
     settings.set_hide_hard_links(custom_settings.hide_hard_links);
     settings.set_duplicates_sub_name_case_sensitive(custom_settings.duplicates_sub_name_case_sensitive);
     settings.set_similar_images_show_image_preview(custom_settings.similar_images_show_image_preview);
+    settings.set_similar_images_list_thumbnails(custom_settings.similar_images_list_thumbnails);
     settings.set_video_thumbnails_preview(custom_settings.video_thumbnails_preview);
+    settings.set_similar_videos_list_thumbnails(custom_settings.similar_videos_list_thumbnails);
+    settings.set_list_thumbnail_size(clamp_list_thumbnail_size(custom_settings.list_thumbnail_size as f32) as f32);
     settings.set_clear_unused_video_thumbnails(custom_settings.clear_unused_video_thumbnails);
     settings.set_similar_music_compare_fingerprints_only_with_similar_titles(custom_settings.similar_music_compare_fingerprints_only_with_similar_titles);
 
@@ -686,8 +690,11 @@ pub(crate) fn collect_settings(app: &MainWindow) -> SettingsCustom {
     let duplicates_sub_name_case_sensitive = settings.get_duplicates_sub_name_case_sensitive();
 
     let similar_images_show_image_preview = settings.get_similar_images_show_image_preview();
+    let similar_images_list_thumbnails = settings.get_similar_images_list_thumbnails();
 
     let video_thumbnails_preview = settings.get_video_thumbnails_preview();
+    let similar_videos_list_thumbnails = settings.get_similar_videos_list_thumbnails();
+    let list_thumbnail_size = clamp_list_thumbnail_size(settings.get_list_thumbnail_size());
     let clear_unused_video_thumbnails = settings.get_clear_unused_video_thumbnails();
 
     let similar_music_compare_fingerprints_only_with_similar_titles = settings.get_similar_music_compare_fingerprints_only_with_similar_titles();
@@ -841,7 +848,10 @@ pub(crate) fn collect_settings(app: &MainWindow) -> SettingsCustom {
         delete_outdated_cache_entries,
         hide_hard_links,
         similar_images_show_image_preview,
+        similar_images_list_thumbnails,
         video_thumbnails_preview,
+        similar_videos_list_thumbnails,
+        list_thumbnail_size,
         clear_unused_video_thumbnails,
         similar_images_sub_hash_size,
         similar_images_sub_hash_alg,

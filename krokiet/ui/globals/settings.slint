@@ -38,8 +38,12 @@ export global Settings {
     in-out property <string> duplicate_minimal_hash_cache_size;
     in-out property <string> duplicate_minimal_prehash_cache_size;
     in-out property <bool> similar_images_show_image_preview;
+    in-out property <bool> similar_images_list_thumbnails;
 
     in-out property <bool> video_thumbnails_preview;
+    in-out property <bool> similar_videos_list_thumbnails;
+    // Shared by every list that shows thumbnails
+    in-out property <float> list_thumbnail_size: 64;
     in-out property <bool> clear_unused_video_thumbnails;
 
 

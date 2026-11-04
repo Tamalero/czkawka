@@ -30,6 +30,7 @@ use slint::{ComponentHandle, ModelRc, SharedString, VecModel};
 
 use crate::audio_player::AudioPlayer;
 use crate::common::{check_if_all_included_dirs_are_referenced, check_if_there_are_any_included_folders};
+use crate::connect_list_thumbnails::clear_list_thumbnails;
 use crate::connect_row_selection::checker::set_number_of_enabled_items;
 use crate::connect_row_selection::reset_selection;
 use crate::connect_scan::bad_extensions::scan_bad_extensions;
@@ -107,6 +108,7 @@ pub(crate) fn connect_scan_button(
 
         let cloned_model = Arc::clone(&shared_models);
 
+        clear_list_thumbnails();
         app.global::<GuiState>().set_info_text("".into());
 
         let a = app.as_weak();

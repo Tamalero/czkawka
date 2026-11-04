@@ -33,6 +33,7 @@ use crate::connect_build_info::{apply_build_info, connect_build_info, start_buil
 use crate::connect_clean_cache::connect_clean_cache;
 use crate::connect_compare::connect_compare;
 use crate::connect_directories_changes::connect_add_remove_directories;
+use crate::connect_list_thumbnails::connect_list_thumbnails;
 use crate::connect_open::connect_open_items;
 use crate::connect_progress_receiver::connect_progress_gathering;
 use crate::connect_row_selection::connect_row_selections;
@@ -63,6 +64,7 @@ mod connect_build_info;
 mod connect_clean_cache;
 mod connect_compare;
 mod connect_directories_changes;
+mod connect_list_thumbnails;
 mod connect_open;
 mod connect_progress_receiver;
 mod connect_rfd;
@@ -188,6 +190,7 @@ fn main() {
     connect_progress_gathering(&app, progress_receiver);
     connect_add_remove_directories(&app);
     connect_show_preview(&app, Arc::clone(&shared_models));
+    connect_list_thumbnails(&app);
     connect_compare(&app, Arc::clone(&shared_models));
     connect_translations(&app);
     connect_help(&app);
