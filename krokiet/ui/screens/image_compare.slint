@@ -92,6 +92,14 @@ component CompareInfoBar inherits Rectangle {
     }
 }
 
+component CompareImagePath inherits Text {
+    vertical-stretch: 0;
+    font-size: FontSizes.small;
+    horizontal-alignment: center;
+    vertical-alignment: top;
+    wrap: char-wrap;
+}
+
 export component ImageCompareOverlay inherits Rectangle {
     private property <bool> info_visible: false;
     private property <bool> diff_mode: false;
@@ -437,6 +445,11 @@ export component ImageCompareOverlay inherits Rectangle {
                             clicked => { Callabler.compare_toggle_checkbox(GuiState.compare_left_idx); }
                         }
                     }
+                    left_path := CompareImagePath {
+                        height: max(self.preferred-height, right_path.preferred-height);
+                        text: left_valid ? GuiState.compare_images[GuiState.compare_left_idx].path : "";
+                        color: ColorPalette.compare_left_value_color;
+                    }
                 }
 
                 VerticalLayout {
@@ -467,6 +480,11 @@ export component ImageCompareOverlay inherits Rectangle {
                             checked: right_valid && GuiState.compare_images[GuiState.compare_right_idx].checked;
                             clicked => { Callabler.compare_toggle_checkbox(GuiState.compare_right_idx); }
                         }
+                    }
+                    right_path := CompareImagePath {
+                        height: max(self.preferred-height, left_path.preferred-height);
+                        text: right_valid ? GuiState.compare_images[GuiState.compare_right_idx].path : "";
+                        color: ColorPalette.compare_right_value_color;
                     }
                 }
             }
